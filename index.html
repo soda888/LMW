@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>库存系统</title>
+  <script src="https://cdn.jsdelivr.net/npm/@cloudbase/js-sdk/dist/cloudbase.full.js"></script>
+</head>
+<body>
+
+<h2>库存管理</h2>
+
+<button onclick="loadData()">加载库存</button>
+
+<table border="1" id="table" style="margin-top:20px">
+  <tr>
+    <th>SKU</th>
+    <th>库存</th>
+    <th>销量</th>
+  </tr>
+</table>
+
+<script>
+const app = cloudbase.init({
+  env: 'lmserver-1ghxwhel1bd49539'
+})
+
+const auth = app.auth()
+
+auth.signInAnonymously().then(() => {
+  console.log('登录成功')
+})
+
+async function loadData() {
+  const res = await app.callFunction({
+    name: 'getInventory'
+  })
+
+  const list = res.result.data
+
+  const table = document.getElementById('table')
+
+  list.forEach(item => {
+    const row = `
+      <tr>
+        <td>${item.sku}</td>
+        <td>${item.stock}</td>
+        <td>${item.sales}</td>
+      </tr>
+    `
+    table.innerHTML += row
+  })
+}
+</script>
+
+</body>
+</html>
